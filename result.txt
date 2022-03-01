@@ -1,0 +1,11 @@
+#include <iostream>
+using namespace std;
+
+int  main() {
+	std::cout << "Hello World!\n";
+	int i, j;
+	for(FOR=0;FOR<56; FOR++)
+	 sizeof("Hello \world \!");
+for(i=0, j=0; i<56; i++)
+		cout<<i;
+
