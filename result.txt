@@ -6,6 +6,15 @@ int  main() {
 	int i, j;
 	for(FOR=0;FOR<56; FOR++)
 	 sizeof("Hello \world \!");
-for(i=0, j=0; i<56; i++)
+	cout<< " " << i;
+	int iforex;
+	for(i=0, j=0; i<56; i++)
 		cout<<i;
-
+	sdfdfsdf
+	for(i=0, j=0; i<56; i++)
+		cout<<i;
+	sdfsdf
+	
+}
+	
+	

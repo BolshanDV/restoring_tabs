@@ -90,7 +90,7 @@ vector<string> tabsClassicBodyLines(const string& forBlock) {
 
 string tabsWithoutBracketsBodyLines( string forBlock ) {
     string startText = forBlock.substr(0, forBlock.find(')'));
-    string g = forBlock.erase(0, forBlock.find(')'));
+    forBlock.erase(0, forBlock.find(')'));
     string f = forBlock.substr(forBlock.find('\n') - 1 , forBlock.find(';') + 1);
     string conditionWithoutTransfer = regex_replace(
         f.substr(f.find(')') + 2, f.find(';') + 1),
@@ -99,7 +99,9 @@ string tabsWithoutBracketsBodyLines( string forBlock ) {
     f.replace(forBlock.find(')') + 2, forBlock.find(';') + 1, conditionWithoutTransfer);
     startText = startText + f;
     string resultTabsBody = startText.insert(startText.find('\n') + 1, "\t");
-    resultTabsBody.insert(resultTabsBody.rfind(';') + 1, "\n");
+//    resultTabsBody.insert(resultTabsBody.rfind(';') + 1, "\n");
+    string otherText = forBlock.substr(forBlock.find(';') + 1);
+    resultTabsBody.append(otherText);
     return resultTabsBody;
 }
 
