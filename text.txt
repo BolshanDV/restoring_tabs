@@ -3,7 +3,7 @@ using namespace std;
 
 int main() {
 std::cout << "Hello World!\n";
-for(i=0, j=0; i<56; i++)
+for(i=0, j=0; i<56; i++);
 cout<<i;
 int FOR;
 for(FOR=0;

@@ -46,19 +46,22 @@ vector<string> split (const string& s, const string& delimiter) {
 }
 
 string processForType(string forBlock) {
-     forBlock = regex_replace(
+     forBlock = regex_replace(regex_replace(
             forBlock,
             regex("\n\t"),
-            "");
+            ""),
+            regex("\n"),
+            "") ;
     string extractedBody = leftTrim(split(forBlock, ")")[1]);
-    extractedBody = extractedBody.substr(0, extractedBody.find(';'));
+//    extractedBody = extractedBody.substr(0, extractedBody.find(';'));
     // check first symbol after "for(cond) { or ; or \n"
     string type;
-    if (extractedBody.find_first_not_of('{')) { type = "ClassicFor"; }
-    else if(extractedBody.find_first_not_of(';')) { type = "NotValidFor"; }
+
+    if (extractedBody.find('{') != -1) { type = "ClassicFor"; }
+    else if(extractedBody.find(';') != -1) { type = "NotValidFor"; }
     else { type = "ForWithoutBrackets"; }
     // if check throw with exception
-    return type;
+    return forBlock;
 }
 
 string creatingTabsByMain (const string& processedCode){
