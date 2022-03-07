@@ -3,7 +3,9 @@ using namespace std;
 
 int main() {
 std::cout << "Hello World!\n";
-int i, j;
+for(i=0, j=0; i<56; i++)
+cout<<i;
+int FOR;
 for(FOR=0;
 FOR<56; FOR++
 ) sizeof("Hello \
@@ -11,10 +13,9 @@ world \
 !");
 cout<< " " << i;
 int iforex;
-for(i=0, j=0; i<56; i++)
-cout<<i;
-sdfdfsdf
-for(i=0, j=0; i<56; i++)
-cout<<i;
-sdfsdf
+int i, j;
+for(int k=i; k>0; k-=1, i--)
+{cout<<i;
+cout<<k;}
+while(--i);
 }

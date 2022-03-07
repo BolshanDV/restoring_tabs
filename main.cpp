@@ -45,16 +45,20 @@ vector<string> split (const string& s, const string& delimiter) {
     return res;
 }
 
-string processForType(const string& forBlock) {
+string processForType(string forBlock) {
+     forBlock = regex_replace(
+            forBlock,
+            regex("\n\t"),
+            "");
     string extractedBody = leftTrim(split(forBlock, ")")[1]);
-
+    extractedBody = extractedBody.substr(0, extractedBody.find(';'));
     // check first symbol after "for(cond) { or ; or \n"
-    if (extractedBody.find_first_not_of('{')) { return "ClassicFor"; }
-    if (extractedBody.find_first_not_of(';')) { return "NotValidFor"; }
-    if (extractedBody.find_first_not_of('\n')) { return "ForWithoutBrackets"; }
-
+    string type;
+    if (extractedBody.find_first_not_of('{')) { type = "ClassicFor"; }
+    else if(extractedBody.find_first_not_of(';')) { type = "NotValidFor"; }
+    else { type = "ForWithoutBrackets"; }
     // if check throw with exception
-    return "Unknown for";
+    return type;
 }
 
 string creatingTabsByMain (const string& processedCode){
@@ -70,13 +74,13 @@ string creatingTabsByMain (const string& processedCode){
     }
     return splitByMain[0] + resultBodyMain;
 }
-vector<string> tabsClassicBodyLines(const string& forBlock) {
+string tabsClassicBodyLines(const string forBlock) {
     // Double split text
     string splitedText = split(split(forBlock, "{")[1], "}")[0];
     string otherText = forBlock.substr(forBlock.find('}') + 1);
     // Replace all \n and " " to ""
-
-    splitedText = regex_replace(regex_replace(splitedText, regex("\n"), ""), regex(" "), "");
+    string condition = forBlock.substr(0, forBlock.find(')') + 1);
+    splitedText = regex_replace(regex_replace(splitedText, regex("\n\t"), ""), regex(" "), "");
 
     // Split elements by ";" and create Vector
     vector<string> body = split(splitedText, ";");
@@ -84,31 +88,38 @@ vector<string> tabsClassicBodyLines(const string& forBlock) {
     // Delete last element, because it always empty
     body.pop_back();
     body.push_back(otherText);
-
-    return body;
+    string classicForTabs = condition + "{";
+    for (int i = 0; i < body.size() - 1; i++) {
+        classicForTabs += "\n\t\t" + body[i];
+    }
+    classicForTabs += "\n\t}" + body[body.size() - 1];
+    return classicForTabs;
 }
 
 string tabsWithoutBracketsBodyLines( string forBlock ) {
     string startText = forBlock.substr(0, forBlock.find(')'));
     forBlock.erase(0, forBlock.find(')'));
     string f = forBlock.substr(forBlock.find('\n') - 1 , forBlock.find(';') + 1);
-    string conditionWithoutTransfer = regex_replace(
-        f.substr(f.find(')') + 2, f.find(';') + 1),
+    string conditionWithoutTransfer = regex_replace(regex_replace(regex_replace(
+        f.substr(f.find(')') + 1 , f.find(';') + 1),
         regex("\n\t"),
-        "");
-    f.replace(forBlock.find(')') + 2, forBlock.find(';') + 1, conditionWithoutTransfer);
-    startText = startText + f;
-    string resultTabsBody = startText.insert(startText.find('\n') + 1, "\t");
-//    resultTabsBody.insert(resultTabsBody.rfind(';') + 1, "\n");
+        ""),
+        regex("\t"),
+        ""),
+        regex("\n"),
+        ""
+        );
+    f.replace(forBlock.find(')') , forBlock.find(';') + 1, conditionWithoutTransfer);
+    startText = startText + ")\n\t\t" + f;
     string otherText = forBlock.substr(forBlock.find(';') + 1);
-    resultTabsBody.append(otherText);
-    return resultTabsBody;
+    startText.append(otherText);
+    return startText;
 }
 
 string creatingTabsByBody(const string& body, const string& type) {
     string bodyVector;
 
-//    if (type == "ClassicFor") bodyVector = tabsClassicBodyLines(body);
+    if (type == "ClassicFor") bodyVector = tabsClassicBodyLines(body);
     if (type == "ForWithoutBrackets") bodyVector = tabsWithoutBracketsBodyLines(body);
 
     return bodyVector;
