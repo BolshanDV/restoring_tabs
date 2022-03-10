@@ -53,15 +53,14 @@ string processForType(string forBlock) {
             regex("\n"),
             "") ;
     string extractedBody = leftTrim(split(forBlock, ")")[1]);
-//    extractedBody = extractedBody.substr(0, extractedBody.find(';'));
-    // check first symbol after "for(cond) { or ; or \n"
+    extractedBody = extractedBody.substr(0, extractedBody.find(';'));
     string type;
 
     if (extractedBody.find('{') != -1) { type = "ClassicFor"; }
-    else if(extractedBody.find(';') != -1) { type = "NotValidFor"; }
+    else if(extractedBody.empty()) { type = "NotValidFor"; }
     else { type = "ForWithoutBrackets"; }
     // if check throw with exception
-    return forBlock;
+    return type;
 }
 
 string creatingTabsByMain (const string& processedCode){
@@ -118,12 +117,20 @@ string tabsWithoutBracketsBodyLines( string forBlock ) {
     startText.append(otherText);
     return startText;
 }
+string tabsWithoutBody( string forBlock ) {
+    string startText = forBlock.substr(0, forBlock.find(')'));
+    forBlock.erase(0, forBlock.find(')'));
+    string otherText = forBlock.substr(forBlock.find(';') + 1);
+    startText.append( ");\n\t" + otherText);
+    return startText;
+}
 
 string creatingTabsByBody(const string& body, const string& type) {
     string bodyVector;
 
     if (type == "ClassicFor") bodyVector = tabsClassicBodyLines(body);
     if (type == "ForWithoutBrackets") bodyVector = tabsWithoutBracketsBodyLines(body);
+    if (type == "NotValidFor") bodyVector = tabsWithoutBody(body);
 
     return bodyVector;
 }
