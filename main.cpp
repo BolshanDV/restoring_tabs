@@ -201,13 +201,19 @@ string creatingTabsByFor (const string& processedCode) {
     return resultTabsWithFor;
 }
 
-string creatingTabsByIf ( const string& processedCode) {
+string creatingTabsByIf ( const string& processedCode, string type) {
 
     string resultTabsWithIf;
-    vector<string> splitByIf = split(processedCode, "if(");
+    vector<string> splitByIf;
+    if (type == "do(") {
+        splitByIf = split(processedCode, "do(");
+    } else {
+        splitByIf = split(processedCode, "if(");
+    }
+
     resultTabsWithIf.append(splitByIf[0]);
     for (int i = 1; i < splitByIf.size(); i++) {
-        string finalElement = "if( " + splitByIf[i].substr(0, splitByIf[i].find(')') + 1) + " {";
+        string finalElement = type + " " + splitByIf[i].substr(0, splitByIf[i].find(')') + 1) + " {";
         string splitedText = split(split(splitByIf[i], "{")[1], "}")[0];
         string bodyWithoutTransfer = regex_replace(regex_replace(regex_replace(
         splitedText,
@@ -229,7 +235,8 @@ string codeAnalysis(string processedCode) {
     vector<string> typeAnalysis = {"main", "for", "if"};
     for (auto & typeAnalysis : typeAnalysis) {
         if(typeAnalysis == "main") processedCode = creatingTabsByMain(processedCode);
-        if( typeAnalysis == "if") processedCode = creatingTabsByIf(processedCode);
+        if( typeAnalysis == "if") processedCode = creatingTabsByIf(processedCode, "if(");
+        if( typeAnalysis == "if") processedCode = creatingTabsByIf(processedCode, "do(");
         if( typeAnalysis == "for") processedCode = creatingTabsByFor(processedCode);
     }
     processedCode.insert(processedCode.rfind('}'), "\n");
