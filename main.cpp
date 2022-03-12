@@ -76,7 +76,7 @@ string creatingTabsByMain (const string& processedCode){
     }
     return splitByMain[0] + resultBodyMain;
 }
-string tabsClassicBodyLines(const string forBlock) {
+string tabsClassicBodyLines(const string& forBlock) {
     // Double split text
     string splitedText = split(split(forBlock, "{")[1], "}")[0];
     string otherText = forBlock.substr(forBlock.find('}') + 1);
@@ -135,6 +135,45 @@ string creatingTabsByBody(const string& body, const string& type) {
     return bodyVector;
 }
 
+//string nestingSearch( const string& code, int start, int openBracket) {
+//    string text = code;
+//    int num = code.length() - 1;
+//    int openBracketCount  = openBracket;
+//
+//    if (start < num) {
+//        for (int i = start; i < code.length(); i++) {
+//            if(code[i] == '{') {
+//                openBracketCount++;
+//            }
+//            if(code[i] == '}') {
+//                openBracketCount--;
+//            }
+//            string element = "";
+//            element = element + code[i];
+//            string transfer = "";
+//            transfer = transfer + code[i + 1];
+//
+//            if(element == "\n"){
+//                int j;
+//                int position = i;
+//                if(transfer == "}") {
+//                    j = openBracketCount - 1;
+//                    position += 1;
+//                } else {
+//                    j = openBracketCount;
+//                }
+//                while (j != 0) {
+//                    text.insert(i + 1, "\t");
+//                    position++ ;
+//                    j--;
+//                }
+//                return nestingSearch(text, position, openBracketCount);
+//            }
+//        }
+//    }
+//    return code;
+//}
+
 string creatingTabsByFor (const string& processedCode) {
     string resultTabsWithFor;
     vector<string> fors = split(processedCode, "for(");
@@ -163,20 +202,44 @@ string creatingTabsByFor (const string& processedCode) {
 }
 
 string creatingTabsByIf ( const string& processedCode) {
-    return "e";
+
+    string resultTabsWithIf;
+    vector<string> splitByIf = split(processedCode, "if(");
+    resultTabsWithIf.append(splitByIf[0]);
+    for (int i = 1; i < splitByIf.size(); i++) {
+        string finalElement = "if( " + splitByIf[i].substr(0, splitByIf[i].find(')') + 1) + " {";
+        string splitedText = split(split(splitByIf[i], "{")[1], "}")[0];
+        string bodyWithoutTransfer = regex_replace(regex_replace(regex_replace(
+        splitedText,
+        regex("\n\t"),""),
+        regex("\t"),""),
+        regex("\n"),"");
+        vector<string> splitBody = split(bodyWithoutTransfer, ";");
+        for (int j = 0; j < splitBody.size() - 1; j++ ) {
+            finalElement.append("\n\t\t" + splitBody[j] + ";");
+        }
+        resultTabsWithIf.append(finalElement + "\n\t}");
+        resultTabsWithIf.append(splitByIf[i].substr(splitByIf[i].find('}') + 1, splitByIf[i].length()));
+    }
+    return resultTabsWithIf;
 }
 
 string codeAnalysis(string processedCode) {
+
     vector<string> typeAnalysis = {"main", "for", "if"};
     for (auto & typeAnalysis : typeAnalysis) {
         if(typeAnalysis == "main") processedCode = creatingTabsByMain(processedCode);
+        if( typeAnalysis == "if") processedCode = creatingTabsByIf(processedCode);
         if( typeAnalysis == "for") processedCode = creatingTabsByFor(processedCode);
-//        if( typeAnalysis == "if") processedCode = creatingTabsByIf(processedCode);
     }
+    processedCode.insert(processedCode.rfind('}'), "\n");
     return processedCode;
 }
 int main() {
     string startingText = readingFile();
+//    string tabulationOfNesting = nestingSearch(startingText.substr(startingText.find('{')), 0, 0);
+//    string textWithNesting = startingText.substr(0, startingText.find('{')) + tabulationOfNesting;
+//    creatureReadyFile(textWithNesting);
     creatureReadyFile( codeAnalysis(startingText));
     cout << "Success" << endl;
     return 0;
