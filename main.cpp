@@ -12,7 +12,7 @@ string readingFile (){
     while (getline(file, str)) {
         content += str;
         content.push_back('\n');
-    };
+    }
     return content;
 }
 
@@ -20,12 +20,10 @@ void creatureReadyFile ( const string& text) {
     ofstream out;
     out.open("/Users/dmitrij/CLionProjects/restoring_tabs1/result.txt", ios::app);
     out << text << endl;
-};
+}
 
-string& leftTrim(string& str)
-{
+string& leftTrim(string& str) {
     string chars = "/ ";
-
     str.erase(0, str.find_first_not_of(chars));
     return str;
 }
@@ -314,6 +312,6 @@ int main() {
     Nesting codeWithExtractElement = extractNesting(startingText, element);
     startingText = codeAnalysis(codeWithExtractElement.code);
     creatureReadyFile(insertCode(codeWithExtractElement.nestingArr, startingText, -1));
-    cout << "Success" << endl;
+    cout << "tabulation was successfully performed" << endl;
     return 0;
 }
