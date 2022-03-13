@@ -51,7 +51,7 @@ struct Nesting {
 string processForType(string forBlock) {
      forBlock = regex_replace(regex_replace(
             forBlock,
-            regex("\n\t"),
+            regex("\t"),
             ""),
             regex("\n"),
             "") ;
@@ -105,10 +105,8 @@ string tabsWithoutBracketsBodyLines( string forBlock ) {
     string startText = forBlock.substr(0, forBlock.find(')'));
     forBlock.erase(0, forBlock.find(')'));
     string f = forBlock.substr(forBlock.find('\n') - 1 , forBlock.find(';') + 1);
-    string conditionWithoutTransfer = regex_replace(regex_replace(regex_replace(
+    string conditionWithoutTransfer = regex_replace(regex_replace(
         f.substr(f.find(')') + 1 , f.find(';') + 1),
-        regex("\n\t"),
-        ""),
         regex("\t"),
         ""),
         regex("\n"),
